@@ -1,10 +1,11 @@
 bubpub.js
 =========
+##bubbling publishing
 > a SubPubish library, that avoids duplication on the cue when multiple events are fired on the same
 namespace
-Way things are going to propigate. 
 
-##Listeners format
+##format
+### listener
 ```code=javascript
     listeners = {
         "full": [ callback1, callback2, callback3, ...]
@@ -12,7 +13,7 @@ Way things are going to propigate.
     }
 ```
 
-listeners are added:
+## bub.listen
     split at " "
         -> each added to listeners
 
@@ -20,24 +21,23 @@ listeners are added:
             NOT exists? -> create
             add.
 
-// Que format------------
-// adding base/mid/top
-que = [
-    0 : ["base"]
-    1 : ["base/mid"]
-    2 : ["base/mid/top"]
-]
-// adding base/mid/top again would provide no change
-// 
-// adding base/branch/top
+## bub.que
+    // adding base/mid/top
+    que = [
+        0 : ["base"]
+        1 : ["base/mid"]
+        2 : ["base/mid/top"]
+    ]
+    // adding base/mid/top again would provide no change
+    // 
+    // adding base/branch/top
 
-que = [
-    0 : ["base"]
-    1 : ["base/mid", "base/branch"]
-    2 : ["base/mid/top", "base/branch/top"]
-]
+    que = [
+        0 : ["base"]
+        1 : ["base/mid", "base/branch"]
+        2 : ["base/mid/top", "base/branch/top"]
+    ]
 
-
-// fire---------------
-// usually async! (unless called directly which is not recomended)
-// go through que backwards  from the leaves down to the root. 
+#$bub.fire
+usually async! (unless called directly which is not recomended)
+go through que backwards  from the leaves down to the root. 
