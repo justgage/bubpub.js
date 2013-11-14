@@ -1,7 +1,5 @@
-var pubsub = {
+var bubpub = {
     que : [],
-    bubble_que : [],
-    bubble_hash : {},
     listeners : {},
     timeout_fired: false,
 
@@ -34,78 +32,100 @@ var pubsub = {
         if (this.timeout_fired === false) {
             this.timeout_fired = true;
             var that = this;
+            var fire = this.fire;
             setTimeout(function () {
-              pubsub.fire(that);
+              fire(that);
             }, 1); // IE doesn't like -> 0
         }
     },
     
-
+    /***
+     * add's a event to each part of the que
+     */
     bubble : function (topic) {
         var chain = topic.split("/");
-        var i = chain.length;
-        console.log("chain", chain);
+        var i = chain.length + 1;
 
-        // first one always fire
-        this.que.push( chain.join("/") );
-
-        console.log("event added",  this.que);
-
-        // bubble other events
         while(--i) {
             var event = chain.slice(0, i).join("/");
-            
-            // combine bubbles
-            if ( (event in this.bubble_hash) === false ) {
-                this.bubble_que.push(event);
-                this.bubble_hash[event] = true; // true doesn't matter
-                console.log("bubble event added ->",  event);
-            } else {
-                console.log("bubble event skipped ->",  event);
-            }
+            var worked = this.que_one(i ,event);
         }
     },
+    // ques it only if it hasn't been qued
+    que_one : function (i, event) {
+        this.que[i] = this.que[i] || [];
 
+
+        if ($.inArray(event, this.que[i]) === -1) {
+            this.que[i].push(event);
+            return true;
+        }    
+        return false;
+    },
+    // fires all the events in the que
     fire : function (that) {
         console.error("FIRE");
-        that.timeout_fired = false;
+        console.log(that.que);
 
-        var runEach = function (que, listeners) {
-            var i, l, j, ll, item;
+        i = that.que.length;
 
-            for (i=0, l = que.length; i < l; i++) {
-                item = que[i];
+        while(--i) {
+            level = that.que[i];
 
-                if (item in listeners) {
-                    for (j=0, ll = listeners[item].length; j < ll; j++) {
-                        listeners[item][j](); // run callback
+            for (var j=0, l = level.length; j < l; j++) {
+                var item = level[j];
+
+                if (item in that.listeners) {
+                    for (var k=0, ll = that.listeners[item].length; k < ll; k++) {
+                        that.listeners[item][k](); // run each callback!
                     }
                 }
             }
-        };
+        }
 
-        runEach(that.que, that.listeners);
-        runEach(that.bubble_que, that.listeners);
+        
 
-        // clear all the ques
+        /*
+
+        for (i=0, l = that.que.length; i < l; i++) {
+            item = that.que[i];
+
+            if (item in that.listeners) {
+                for (j=0, ll = that.listeners[item].length; j < ll; j++) {
+                    that.listeners[item][j](); // run callback
+                }
+            }
+        }
+
+
+       */
+
         that.que = [];
-        that.bubble_que = [];
-        that.bubble_hash = {};
+        that.timeout_fired = false;
     }
 };
 
 
-pubsub.listen("people", function () {
-    console.log("hi all");
+
+bubpub.listen("people", function () {
+    console.log("hello all people");
 });
 
-pubsub.listen("people/hi", function () {
+bubpub.listen("people/hi", function () {
     console.log("hi people");
 });
 
-pubsub.listen("people/spanish", function () {
+bubpub.listen("people/spanish", function () {
     console.log("olah people");
 });
 
-pubsub.say("people/hi people/hi people/spanish");
+bubpub.say("people/hi people/hi people/spanish");
+
+/***
+ * console.log says: 
+ *
+ * hi people 
+ * olah people 
+ * hi all people
+ */
 
