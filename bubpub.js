@@ -17,6 +17,7 @@ var bubpub = {
     },
 
     say : function (topic_str) {
+        
         console.log("SAY");
         var topics = topic_str.split(" ");
 
@@ -31,10 +32,12 @@ var bubpub = {
          */
         if (this.timeout_fired === false) {
             this.timeout_fired = true;
+            
+            //needed for the 'this' problem
             var that = this;
             var fire = this.fire;
             setTimeout(function () {
-              fire(that);
+                fire(that);
             }, 1); // IE doesn't like -> 0
         }
     },
@@ -104,28 +107,3 @@ var bubpub = {
         that.timeout_fired = false;
     }
 };
-
-
-
-bubpub.listen("people", function () {
-    console.log("hello all people");
-});
-
-bubpub.listen("people/hi", function () {
-    console.log("hi people");
-});
-
-bubpub.listen("people/spanish", function () {
-    console.log("olah people");
-});
-
-bubpub.say("people/hi people/hi people/spanish");
-
-/***
- * console.log says: 
- *
- * hi people 
- * olah people 
- * hi all people
- */
-
