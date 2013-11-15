@@ -67,13 +67,16 @@ var bubpub = {
     },
     // fires all the events in the que
     fire : function (that) {
+        var que = that.que;
+        that.que = [];
+        that.timeout_fired = false;
         console.error("FIRE");
-        console.log(that.que);
+        console.log(que);
 
-        i = that.que.length;
+        i = que.length;
 
         while(--i) {
-            level = that.que[i];
+            level = que[i];
 
             for (var j=0, l = level.length; j < l; j++) {
                 var item = level[j];
@@ -90,8 +93,8 @@ var bubpub = {
 
         /*
 
-        for (i=0, l = that.que.length; i < l; i++) {
-            item = that.que[i];
+        for (i=0, l = que.length; i < l; i++) {
+            item = que[i];
 
             if (item in that.listeners) {
                 for (j=0, ll = that.listeners[item].length; j < ll; j++) {
@@ -103,7 +106,5 @@ var bubpub = {
 
        */
 
-        that.que = [];
-        that.timeout_fired = false;
     }
 };
