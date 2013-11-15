@@ -47,10 +47,10 @@ var bubpub = {
      */
     bubble : function (topic) {
         var chain = topic.split("/");
-        var i = chain.length + 1;
+        var i = chain.length;
 
-        while(--i) {
-            var event = chain.slice(0, i).join("/");
+        while(i--) {
+            var event = chain.slice(0, i + 1).join("/");
             var worked = this.que_one(i ,event);
         }
     },
@@ -75,7 +75,7 @@ var bubpub = {
 
         i = que.length;
 
-        while(--i) {
+        while(i--) {
             level = que[i];
 
             for (var j=0, l = level.length; j < l; j++) {
