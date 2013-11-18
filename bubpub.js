@@ -18,11 +18,11 @@ var bubpub = {
     },
 
     say : function (topic_str, args_obj) {
+        console.group("SAY");
 
         // merge the two objects together
         $.extend(this.args[topic_str], args_obj );
 
-        console.log("SAY");
         var topics = topic_str.split(" ");
 
         console.log("topics" , topics);
@@ -44,6 +44,7 @@ var bubpub = {
                 fire(that);
             }, 1); // IE doesn't like -> 0
         }
+        console.groupEnd("SAY");
     },
     
     /***
@@ -74,8 +75,7 @@ var bubpub = {
         var que = that.que;
         that.que = [];
         that.timeout_fired = false;
-        console.error("FIRE");
-        console.log(que);
+        console.group("FIRE");
 
         i = que.length;
 
@@ -99,30 +99,14 @@ var bubpub = {
                     // run all listeners attached to that event
                     for (var k=0, ll = that.listeners[item].length; k < ll; k++) {
                         
+                        console.log("EVENT ->" , k, item);
                         // run each callback! passing args in the hash
                         that.listeners[item][k]( that.args[item] ); 
                     }
 
                 }
             }
+            console.groupEnd("FIRE");
         }
-
-        
-
-        /*
-
-        for (i=0, l = que.length; i < l; i++) {
-            item = que[i];
-
-            if (item in that.listeners) {
-                for (j=0, ll = that.listeners[item].length; j < ll; j++) {
-                    that.listeners[item][j](); // run callback
-                }
-            }
-        }
-
-
-       */
-
     }
 };
