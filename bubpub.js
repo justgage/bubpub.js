@@ -1,5 +1,6 @@
 var bubpub = {
     que : [],
+    args : [],
     listeners : {},
     timeout_fired: false,
 
@@ -16,8 +17,11 @@ var bubpub = {
         }
     },
 
-    say : function (topic_str) {
-        
+    say : function (topic_str, args_obj) {
+
+        // merge the two objects together
+        $.extend(this.args[topic_str], args_obj );
+
         console.log("SAY");
         var topics = topic_str.split(" ");
 
@@ -75,16 +79,30 @@ var bubpub = {
 
         i = que.length;
 
+        // go through the que levels from the high to low
+        //
+        // a level is how deeply nested by slashes a thing is
+        //  eg: base/middle/last... 
+        //       ^-0   ^-1   ^-2
+        // so the deepest nested things go first
+        // and bubble up to the parents
         while(i--) {
-            level = que[i];
+            level = que[i]; 
 
+            // each item on the level in order they where added
             for (var j=0, l = level.length; j < l; j++) {
                 var item = level[j];
 
+                // if there is anyone listening to that event
                 if (item in that.listeners) {
+
+                    // run all listeners attached to that event
                     for (var k=0, ll = that.listeners[item].length; k < ll; k++) {
-                        that.listeners[item][k](); // run each callback!
+                        
+                        // run each callback! passing args in the hash
+                        that.listeners[item][k]( that.args[item] ); 
                     }
+
                 }
             }
         }
