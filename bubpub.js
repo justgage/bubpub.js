@@ -4,6 +4,15 @@ var bubpub = {
     listeners : {},
     timeout_fired: false,
 
+    /***
+     * listen
+     *
+     * @desc Add a listener (or subscribe) to an event
+     *
+     * @arg {string} topic_str the event to listen to (namespaced by /'s)
+     *          eg: "top_event"
+     *          eg: "top_event/nested"
+     */
     listen : function (topic_str, callback) {
         var topics = topic_str.split(" ");
 
@@ -23,6 +32,19 @@ var bubpub = {
 
         }
     },
+
+    /***
+     * say 
+     *
+     * @desc 'say' a new event (publish)
+     *       which adds it to the que and makes a setTimout event to 
+     *       fire the que (if one doesn't already exist needed).
+     *
+     * @arg {string} topic_str event to publish, 
+     *                         see listen function above
+     *
+     * @arg {obj} args_obj this is an object that is passed to the listening event function.
+     */
     say : function (topic_str, args_obj) {
         var topics = topic_str.split(" ");
 
@@ -70,7 +92,11 @@ var bubpub = {
             var worked = this.que_one(i ,event);
         }
     },
-    // ques it only if it hasn't been qued
+    /***
+     * que_one
+     *
+     * @desc add an event to the que if it doesn't already exists.
+     */
     que_one : function (i, event) {
         this.que[i] = this.que[i] || [];
 
@@ -81,7 +107,14 @@ var bubpub = {
         }    
         return false;
     },
-    // fires all the events in the que
+
+    /***
+     * fire
+     *
+     * @desc fires all the events in the que.
+     *
+     * @arg {object} that a link to this object when called via setTimout made in the say function
+     */
     fire : function (that) {
         var que = that.que;
         that.que = [];
