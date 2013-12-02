@@ -46,7 +46,7 @@ var bubpub = {
             var fire = this.fire;
             setTimeout(function () {
                 fire(that);
-            }, 1); // IE doesn't like -> 0
+            }, 25); // IE doesn't like -> 0
         }
         console.groupEnd("SAY");
     },
