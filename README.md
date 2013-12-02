@@ -1,19 +1,72 @@
 bubpub.js
 =========
-_a SubPub(ish) library, that avoids duplication on the cue,
-because the view only needs to know once_
+_a SubPub(ish) library, that avoids duplication on the que,_
 
-__STATUS:__ unstable!
+__STATUS:__ beta
 
 ##Features:
- - events don't duplicate or interupt code
- - Nesting pubs that "bubble" up the chain when they are fired
- - saying and listening to multiple events in a single call.
+ - Events don't duplicate or interrupt code.
+ - Nesting pubs that "bubble" up the chain when they are fired.
 
 How it works:
 =============
+##Overview
 
-In it's simplist form,
+1. __listen__ to a event with a callback.
+2. __say__ (publish) a event which gets qued to fire async with setTimout.
+3. __fire__ the que for all the callbacks listening to those events. 
+
+
+###1. listen (subscribe)
+_listen or subscribe to an event. This means the callback will fire anytime the event is fired_
+
+```javascript
+bubpub.listen({string} names, {function} callback)
+```
+
+```javascript
+//listen to one event
+bubpub.listen("dog", function () {...}); 
+
+//listen to two events
+bubpub.listen("dog cat", function () {...});  
+
+//listen to a nested event
+bubpub.listen("dog/bark", function () {...}); 
+
+//listen to a different nested event
+bubpub.listen("dog/sit", function () {...}); 
+
+//listen to parent event which will fire on any of the following changes:
+// 'dog'
+// 'dog/bark'
+// 'dog/sit'
+bubpub.listen("dog", function () {...});
+```
+
+###2. say (publish)
+_add an event to the que. that will fire all listening events._
+
+```javascript
+// adds "dog" and "dog/bark" to the que
+bubpub.say("dog/bark");
+
+// dog already exists on the que thus this is ignored.
+bubpub.say("dog");
+
+// this adds 'dob/sit' to the que but ignores 'dog'
+bubpub.say("dog/sit");
+
+
+// que is fired async in the following order
+//
+// fire: 'dog/bark'
+// fire: 'dog/sit'
+// fire: 'dog'
+```
+
+###Pulling it together. 
+
 ````javascript
 
     bubpub.listen("people", function () {
@@ -25,7 +78,7 @@ In it's simplist form,
     });
 
     bubpub.listen("people/spanish", function () {
-        console.log("olah people");
+        console.log("¡Hola people");
     });
 
     bubpub.say("people/hi people/hi people/spanish");
@@ -34,16 +87,14 @@ In it's simplist form,
      * console.log says: 
      *
      * hi people 
-     * olah people 
-     * hi all people
+     * ¡Hola people 
+     * hello all people
      */
 
 ````
-__NOTE__  due to the async nature of "say" this does the same thing:
 
-
-
-##format
+#Code structure
+_information for people working on bubpub_
 ### listener
 ````javascript
     listeners = {
@@ -51,14 +102,6 @@ __NOTE__  due to the async nature of "say" this does the same thing:
         "full/structure": [ callback1, ...]
     }
 ````
-
-## bubpub.listen
-    split at " "
-        -> each added to listeners
-
-        each
-            NOT exists? -> create
-            add.
 
 ## bub.que
     // adding base/mid/top
@@ -77,6 +120,5 @@ __NOTE__  due to the async nature of "say" this does the same thing:
         2 : ["base/mid/top", "base/branch/top"]
     ]
 
-#$bub.fire
-usually async! (unless called directly which is not recomended)
-go through que backwards  from the leaves down to the root. 
+
+
