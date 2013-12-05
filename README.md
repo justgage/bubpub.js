@@ -3,20 +3,24 @@ BUBPUB.JS
 _a pubsub(ish) library that allows you to tie actions to events in a bubbling, non-duplicating, and non-blocking way._
 
 __bubbling?__
+
 Meaning if you call a child event every parent event gets called. 
+
 eg: you call `parent/cool/child` then `parent`, `parent/cool` also get called.
 
 __non-duplicating?__
+
 This means when you publish an event __more that once__ it only gets called __one__ time when the que is emptied.
 
 __non-blocking?__
+
 also called 'async'. This means that the events don't publish till your code is done running
 
 
 ##Features:
 
  - "Talking objects" that publish events when the change.
- - Events don't duplicate or interrupt code.
+ - Event que that doesn't duplicate or interrupt code.
  - Nesting (or name spacing) events that "bubble" up the chain when they are fired.
 
 #Uses
@@ -40,7 +44,7 @@ bubpub.listen({string} names, {function} callback)
 
 ```javascript
 //listen to one event
-bubpub.listen("dog", function () {...}); 
+bubpub.listen("rat", function () {...}); 
 
 //listen to two events
 bubpub.listen("dog cat", function () {...});  
