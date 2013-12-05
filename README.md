@@ -1,6 +1,6 @@
 BUBPUB.JS
 =========
-_a pubsub(ish) library that allows you to tie actions to events in a bubbling non-duplicating an non-blocking way._
+_a pubsub(ish) library that allows you to tie actions to events in a bubbling, non-duplicating, and non-blocking way._
 
 __bubbling?__
 Meaning if you call a child event every parent event gets called. 
