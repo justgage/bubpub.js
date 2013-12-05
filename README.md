@@ -1,6 +1,6 @@
 bubpub.js
 =========
-_a SubPub(ish) library, that avoids duplication on the que,_
+_a SubPub(ish) library, that avoids duplication on the que_
 
 __STATUS:__ beta
 
@@ -67,31 +67,50 @@ bubpub.say("dog/sit");
 
 ###Pulling it together. 
 
-````javascript
+```javascript
+bubpub.listen("people", function () {
+    console.log("hello all people");
+});
 
-    bubpub.listen("people", function () {
-        console.log("hello all people");
-    });
+bubpub.listen("people/hi", function () {
+    console.log("hi people");
+});
 
-    bubpub.listen("people/hi", function () {
-        console.log("hi people");
-    });
+bubpub.listen("people/spanish", function () {
+    console.log("¡Hola people");
+});
 
-    bubpub.listen("people/spanish", function () {
-        console.log("¡Hola people");
-    });
+bubpub.say("people/hi people/hi people/spanish");
 
-    bubpub.say("people/hi people/hi people/spanish");
+/***
+ * console.log says: 
+ *
+ * hi people 
+ * ¡Hola people 
+ * hello all people
+ */
+```
 
-    /***
-     * console.log says: 
-     *
-     * hi people 
-     * ¡Hola people 
-     * hello all people
-     */
+###Talking objects
+These are objects that have their own bubpub event that they fire whenever they change. 
 
-````
+they will not change in the following conditions
+
+- the value is the same
+- the value does not pass the validator function.
+
+```javascript
+var object = bubpub.obj('route/something', "start_value", validation_func);
+
+var get_val = object(); // get value ("start_value")
+
+object("cool"); // set value to "cool"
+
+// listen to the changes to the object
+bubpub.listen('route/something', function () {...});
+```
+
+
 
 #Code structure
 _information for people working on bubpub_

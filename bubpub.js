@@ -62,13 +62,13 @@ var bubpub = {
          */
         if (this.timeout_fired === false) {
             this.timeout_fired = true;
-            
+
             //needed for the 'this' problem
             var that = this;
             var fire = this.fire;
             setTimeout(function () {
                 fire(that);
-            }, 25); // IE doesn't like -> 0
+            }, 25); // allow to view to reflow. 
         }
         console.groupEnd("SAY");
     },
@@ -79,7 +79,7 @@ var bubpub = {
             that.say(topic_str, args_obj);
         };
     },
-  
+
     /***
      * add's a event to each part of the que
      */
@@ -142,7 +142,7 @@ var bubpub = {
 
                     // run all listeners attached to that event
                     for (var k=0, ll = that.listeners[item].length; k < ll; k++) {
-                        
+
                         console.log("EVENT ->" , k, item);
                         // run each callback! passing args in the hash
                         that.listeners[item][k]( that.args[item] ); 
@@ -153,5 +153,84 @@ var bubpub = {
         }
 
         console.groupEnd("FIRE");
+    },
+
+
+
+    /***
+     * @name bubpub.obj
+     *
+     * An object that publishes events when it changes
+     *
+     * also has ability to have a validator function passed
+     * in to test if the input is valid or not.
+     *
+     * @arg {string} publish_name   a string of a publishing name that is pushed to bubpub.
+     * @arg {any} preset            a value to set the object to when created.
+     * @arg {funciton} validator    a function that will return TRUE if the value is valid.
+     *
+     * @return {function}           returns function for getting and setting the value.
+     *
+     * @constructor
+     */
+    obj : function (publish_name, preset, validator) {
+
+        if (typeof preset === 'undefined') {
+            preset = null;
+        }
+        if (typeof validator === 'undefined') {
+            validator = null;
+        }
+
+        // save as a local var
+        var value = preset;
+
+        /***
+         * Will change value to new_val 
+         *  IF the values are different 
+         *  AND it passes the validator function (if there is one)
+         *
+         * @arg {any} new_val value to try to change 'value' to.
+         */
+        var change = function (new_val) {
+
+            // and is valid
+            if (validator === null || validator(new_val) === true) {
+                // make sure we're changing it
+                if (value !== new_val) {
+                    console.log('SET' ,value, '-> ' + publish_name + ' ->', new_val);
+                    value = new_val;
+                    bubpub.say(publish_name);
+                    return true;
+                }
+            } else {
+                console.error(publish_name, ' trying to set to ', new_val);
+                return false;
+            }
+        };
+
+        /***
+         * function that will get/set the value.
+         *      IF new_val is passed it SETS value.
+         *      IF NOT it GETS value.
+         *
+         * @arg {any} new_val value to change 'value' to. 
+         *
+         * @return {any / bool} returns if the value was changed if it SETS
+         *                           returns value if not set. 
+         */
+        return function kobj_get_set(new_val) {
+            // GET
+            if (typeof new_val === 'undefined') {
+                if (value === null) {
+                    console.error(publish_name + ' returning NULL');
+                }
+                return value; // get
+            } else {
+                // SET
+                return change(new_val);
+            }
+
+        };
     }
 };
