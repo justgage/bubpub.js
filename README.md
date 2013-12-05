@@ -1,12 +1,26 @@
-bubpub.js
+BUBPUB.JS
 =========
-_a SubPub(ish) library, that avoids duplication on the que_
+_a pubsub(ish) library that allows you to tie actions to events in a bubbling non-duplicating an non-blocking way._
 
-__STATUS:__ beta
+__bubbling?__
+Meaning if you call a child event every parent event gets called. 
+eg: you call `parent/cool/child` then `parent`, `parent/cool` also get called.
+
+__non-duplicating?__
+This means when you publish an event __more that once__ it only gets called __one__ time when the que is emptied.
+
+__non-blocking?__
+also called 'async'. This means that the events don't publish till your code is done running
+
 
 ##Features:
+
+ - "Talking objects" that publish events when the change.
  - Events don't duplicate or interrupt code.
- - Nesting pubs that "bubble" up the chain when they are fired.
+ - Nesting (or name spacing) events that "bubble" up the chain when they are fired.
+
+#Uses
+__bubpub__ is great for updating the view because the events are non-duplicating they won't touch the DOM more than they need to. 
 
 How it works:
 =============
@@ -97,7 +111,8 @@ These are objects that have their own bubpub event that they fire whenever they 
 they will not change in the following conditions
 
 - the value is the same
-- the value does not pass the validator function.
+- the value does not pass the validator function. (true = valid, false = invalid (don't change)) 
+
 
 ```javascript
 var object = bubpub.obj('route/something', "start_value", validation_func);
@@ -110,34 +125,40 @@ object("cool"); // set value to "cool"
 bubpub.listen('route/something', function () {...});
 ```
 
+##How the javascript event que works
+bubpub is an async que which means that it piles up the que till the current code is done running then it allows a little time for the browser to redraw then emptys the que. 
+
+__how the event system works__
+
+- Any async event (setTimeout, click events, ajax calls, etc...) will never interupt code! they will just get pushed to the event que.
+- the event que is what the browser fires after the current code is done and it's looking for somthing to do. 
+- the browser window is only redrawn whenever there is _nothing_ on the event que. 
+- setTimeout will que the event AFTER the timer minimum is passesd. Thus if you set the timer to more than 25ms then it allows time for the browser to redraw before adding new code to the que. 
 
 
-#Code structure
-_information for people working on bubpub_
+#The que structure
+```javascript
+// adding base/mid/top
+que = [
+    0 : ["base"]
+    1 : ["base/mid"]
+    2 : ["base/mid/top"]
+]
+// adding base/mid/top again would provide no change
+// 
+// adding base/branch/top
+
+que = [
+    0 : ["base"]
+    1 : ["base/mid", "base/branch"]
+    2 : ["base/mid/top", "base/branch/top"]
+]
+```
+
 ### listener
 ````javascript
-    listeners = {
-        "full": [ callback1, callback2, callback3, ...]
-        "full/structure": [ callback1, ...]
-    }
+listeners = {
+    "full": [ callback1, callback2, callback3, ...]
+    "full/structure": [ callback1, ...]
+}
 ````
-
-## bub.que
-    // adding base/mid/top
-    que = [
-        0 : ["base"]
-        1 : ["base/mid"]
-        2 : ["base/mid/top"]
-    ]
-    // adding base/mid/top again would provide no change
-    // 
-    // adding base/branch/top
-
-    que = [
-        0 : ["base"]
-        1 : ["base/mid", "base/branch"]
-        2 : ["base/mid/top", "base/branch/top"]
-    ]
-
-
-
