@@ -10,7 +10,7 @@ eg: you call `parent/cool/child` then `parent`, `parent/cool` also get called.
 
 __non-duplicating?__
 
-This means when you publish an event __more that once__ it only gets called __one__ time when the que is emptied.
+This means when you publish the __same event multiple__ times before the code is done executing it only gets called __once__ when the que is emptied.
 
 __non-blocking?__
 
