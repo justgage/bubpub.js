@@ -1,5 +1,5 @@
 var bubpub = {
-    que : [],
+    queue : [],
     args : [],
     listeners : {},
     timeout_fired: false,
@@ -37,8 +37,8 @@ var bubpub = {
      * say 
      *
      * @desc 'say' a new event (publish)
-     *       which adds it to the que and makes a setTimout event to 
-     *       fire the que (if one doesn't already exist needed).
+     *       which adds it to the queue and makes a setTimout event to 
+     *       fire the queue (if one doesn't already exist needed).
      *
      * @arg {string} topic_str event to publish, 
      *                         see listen function above
@@ -81,7 +81,7 @@ var bubpub = {
     },
 
     /***
-     * add's a event to each part of the que
+     * add's a event to each part of the queue
      */
     bubble : function (topic) {
         var chain = topic.split("/");
@@ -89,20 +89,20 @@ var bubpub = {
 
         while(i--) {
             var event = chain.slice(0, i + 1).join("/");
-            var worked = this.que_one(i ,event);
+            var worked = this.queue_one(i ,event);
         }
     },
     /***
-     * que_one
+     * queue_one
      *
-     * @desc add an event to the que if it doesn't already exists.
+     * @desc add an event to the queue if it doesn't already exists.
      */
-    que_one : function (i, event) {
-        this.que[i] = this.que[i] || [];
+    queue_one : function (i, event) {
+        this.queue[i] = this.queue[i] || [];
 
 
-        if ($.inArray(event, this.que[i]) === -1) {
-            this.que[i].push(event);
+        if ($.inArray(event, this.queue[i]) === -1) {
+            this.queue[i].push(event);
             return true;
         }    
         return false;
@@ -111,19 +111,19 @@ var bubpub = {
     /***
      * fire
      *
-     * @desc fires all the events in the que.
+     * @desc fires all the events in the queue.
      *
      * @arg {object} that a link to this object when called via setTimout made in the say function
      */
     fire : function (that) {
-        var que = that.que;
-        that.que = [];
+        var queue = that.queue;
+        that.queue = [];
         that.timeout_fired = false;
         console.group("FIRE");
 
-        i = que.length;
+        i = queue.length;
 
-        // go through the que levels from the high to low
+        // go through the queue levels from the high to low
         //
         // a level is how deeply nested by slashes a thing is
         //  eg: base/middle/last... 
@@ -131,7 +131,7 @@ var bubpub = {
         // so the deepest nested things go first
         // and bubble up to the parents
         while(i--) {
-            level = que[i]; 
+            level = queue[i]; 
 
             // each item on the level in order they where added
             for (var j=0, l = level.length; j < l; j++) {

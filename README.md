@@ -10,7 +10,7 @@ eg: you call `parent/cool/child` then `parent`, `parent/cool` also get called.
 
 __non-duplicating?__
 
-This means when you publish the __same event multiple__ times before the code is done executing it only gets called __once__ when the que is emptied.
+This means when you publish the __same event multiple__ times before the code is done executing it only gets called __once__ when the queue is emptied.
 
 __non-blocking?__
 
@@ -20,7 +20,7 @@ also called 'async'. This means that the events don't publish till your code is 
 ##Features:
 
  - "Talking objects" that publish events when the change.
- - Event que that doesn't duplicate or interrupt code.
+ - Event queue that doesn't duplicate or interrupt code.
  - Nesting (or name spacing) events that "bubble" up the chain when they are fired.
 
 #Uses
@@ -31,8 +31,8 @@ How it works:
 ##Overview
 
 1. __listen__ to a event with a callback.
-2. __say__ (publish) a event which gets qued to fire async with setTimout.
-3. __fire__ the que for all the callbacks listening to those events. 
+2. __say__ (publish) a event which gets queued to fire async with setTimout.
+3. __fire__ the queue for all the callbacks listening to those events. 
 
 
 ###1. listen (subscribe)
@@ -63,20 +63,20 @@ bubpub.listen("dog", function () {...});
 ```
 
 ###2. say (publish)
-_add an event to the que. that will fire all listening events._
+_add an event to the queue. that will fire all listening events._
 
 ```javascript
-// adds "dog" and "dog/bark" to the que
+// adds "dog" and "dog/bark" to the queue
 bubpub.say("dog/bark");
 
-// dog already exists on the que thus this is ignored.
+// dog already exists on the queue thus this is ignored.
 bubpub.say("dog");
 
-// this adds 'dob/sit' to the que but ignores 'dog'
+// this adds 'dob/sit' to the queue but ignores 'dog'
 bubpub.say("dog/sit");
 
 
-// que is fired async in the following order
+// queue is fired async in the following order
 //
 // fire: 'dog/bark'
 // fire: 'dog/sit'
@@ -129,21 +129,21 @@ object("cool"); // set value to "cool"
 bubpub.listen('route/something', function () {...});
 ```
 
-##How the javascript event que works
-bubpub is an async que which means that it piles up the que till the current code is done running then it allows a little time for the browser to redraw then emptys the que. 
+##How the javascript event queue works
+bubpub is an async queue which means that it piles up the queue till the current code is done running then it allows a little time for the browser to redraw then emptys the queue. 
 
 __how the event system works__
 
-- Any async event (setTimeout, click events, ajax calls, etc...) will never interupt code! they will just get pushed to the event que.
-- the event que is what the browser fires after the current code is done and it's looking for somthing to do. 
-- the browser window is only redrawn whenever there is _nothing_ on the event que. 
-- setTimeout will que the event AFTER the timer minimum is passesd. Thus if you set the timer to more than 25ms then it allows time for the browser to redraw before adding new code to the que. 
+- Any async event (setTimeout, click events, ajax calls, etc...) will never interupt code! they will just get pushed to the event queue.
+- the event queue is what the browser fires after the current code is done and it's looking for somthing to do. 
+- the browser window is only redrawn whenever there is _nothing_ on the event queue. 
+- setTimeout will queue the event AFTER the timer minimum is passesd. Thus if you set the timer to more than 25ms then it allows time for the browser to redraw before adding new code to the queue. 
 
 
-#The que structure
+#The queue structure
 ```javascript
 // adding base/mid/top
-que = [
+queue = [
     0 : ["base"]
     1 : ["base/mid"]
     2 : ["base/mid/top"]
@@ -152,7 +152,7 @@ que = [
 // 
 // adding base/branch/top
 
-que = [
+queue = [
     0 : ["base"]
     1 : ["base/mid", "base/branch"]
     2 : ["base/mid/top", "base/branch/top"]
