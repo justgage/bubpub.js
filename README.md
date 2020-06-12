@@ -17,25 +17,25 @@ __non-blocking?__
 also called 'async'. This means that the events don't publish till your code is done running
 
 
-##Features:
+## Features:
 
  - "Talking objects" that publish events when the change.
  - Event queue that doesn't duplicate or interrupt code.
  - Nesting (or name spacing) events that "bubble" up the chain when they are fired.
 
-#Uses
+# Uses
 __bubpub__ is great for updating the view because the events are non-duplicating they won't touch the DOM more than they need to. 
 
 How it works:
 =============
-##Overview
+## Overview
 
 1. __listen__ to a event with a callback.
 2. __say__ (publish) a event which gets queued to fire async with setTimout.
 3. __fire__ the queue for all the callbacks listening to those events. 
 
 
-###1. listen (subscribe)
+### 1. listen (subscribe)
 _listen or subscribe to an event. This means the callback will fire anytime the event is fired_
 
 ```javascript
@@ -62,7 +62,7 @@ bubpub.listen("dog/sit", function () {...});
 bubpub.listen("dog", function () {...});
 ```
 
-###2. say (publish)
+### 2. say (publish)
 _add an event to the queue. that will fire all listening events._
 
 ```javascript
@@ -72,7 +72,7 @@ bubpub.say("dog/bark");
 // dog already exists on the queue thus this is ignored.
 bubpub.say("dog");
 
-// this adds 'dob/sit' to the queue but ignores 'dog'
+// this adds 'dog/sit' to the queue but ignores 'dog'
 bubpub.say("dog/sit");
 
 
@@ -83,7 +83,7 @@ bubpub.say("dog/sit");
 // fire: 'dog'
 ```
 
-###Pulling it together. 
+### Pulling it together. 
 
 ```javascript
 bubpub.listen("people", function () {
@@ -109,7 +109,7 @@ bubpub.say("people/hi people/hi people/spanish");
  */
 ```
 
-###Talking objects
+### Talking objects
 These are objects that have their own bubpub event that they fire whenever they change. 
 
 they will not change in the following conditions
@@ -129,7 +129,7 @@ object("cool"); // set value to "cool"
 bubpub.listen('route/something', function () {...});
 ```
 
-##How the javascript event queue works
+## How the javascript event queue works
 bubpub is an async queue which means that it piles up the queue till the current code is done running then it allows a little time for the browser to redraw then emptys the queue. 
 
 __how the event system works__
@@ -140,7 +140,7 @@ __how the event system works__
 - setTimeout will queue the event AFTER the timer minimum is passesd. Thus if you set the timer to more than 25ms then it allows time for the browser to redraw before adding new code to the queue. 
 
 
-#The queue structure
+# The queue structure
 ```javascript
 // adding base/mid/top
 queue = [
